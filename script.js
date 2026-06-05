@@ -1,12 +1,16 @@
 'use strict';
 
-///////////////////////////////////////
-// Modal window
 
 const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+
+
+///////////////////////////////////////
+// Modal window
 
 const openModal = function (e) {
   e.preventDefault();
@@ -30,11 +34,9 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-///////////////////////////////////////////////////
-// Smooth scrolling
 
-const btnScrollTo = document.querySelector('.btn--scroll-to');
-const section1 = document.querySelector('#section--1');
+/////////////////////////////////////////////////////////
+// Smooth scrolling
 
 btnScrollTo.addEventListener('click', function(e) {
   const s1coords = section1.getBoundingClientRect();
@@ -55,6 +57,36 @@ btnScrollTo.addEventListener('click', function(e) {
   section1.scrollIntoView({behavior: 'smooth'});
 
 })
+
+
+/////////////////////////////////////////////////////
+// Page navigation
+
+// document.querySelectorAll('.nav__link').forEach(function(el) {         //Not the optimal solution for large amount of elements
+//   el.addEventListener('click', function(e) {
+//     e.preventDefault();
+//     const id = this.getAttribute('href');
+//     console.log(id);
+//     document.querySelector(id).scrollIntoView({behavior: 'smooth'});
+//   })
+// })
+
+//We can use EVENT DELEGATION
+//1) add event listener to a common parent of all elements in interest
+//2) determine ehat element originated the event
+
+document.querySelector('.nav__links').addEventListener('click', function(e){
+  e.preventDefault();
+
+  //Matching strategy
+  if(e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+    console.log(id);
+    document.querySelector(id).scrollIntoView({behavior: 'smooth'});
+  }
+});
+
+
 
 
 /*
@@ -164,6 +196,65 @@ logo.classList.contains('c');
 
 logo.className = 'jonas';   //Don't use
 
-*/
+
 
 ////////////////////// TYPES OF EVENTS AND EVENT HANDLERS ////////////////
+
+const h1 = document.querySelector('h1');
+
+const alertH1 = function(e) {    
+  alert('addEventListener: Great! You are reading the heading :D');
+
+  h1.removeEventListener('mouseenter', alertH1);
+}
+
+h1.addEventListener('mouseenter', alertH1 ) //like hover
+
+// h1.onmouseenter = function(e) {
+//   alert('addEventListener: Great! You are reading the heading :D');     //Should generally use addEventListener
+// }
+
+
+
+////////////////////  EVENT PROPAGATION: BUBBLING AND CAPTURING ///////////////////
+
+// Event propagation is compromised of three stages:
+//   1) capturing phase
+//   2) target phase
+//   3) bubbling phase
+
+// Events start at the root of the dom and travel downward until the target element is reached,
+// afterwards, the same event returns up the tree to the root of the dom.
+
+//However, there are few events that don't follow this order.
+
+
+
+/////////////////////// EVENT PROPAGATION PRACTICE ////////////////
+
+const randomInt = (min,max) => Math.floor(Math.random() * (max - min + 1) + min);
+
+const randomColor = () => `rgb(${randomInt(0,255)},${randomInt(0,255)},${randomInt(0,255)})`;
+console.log(randomColor());
+
+document.querySelector('.nav__link').addEventListener('click', function(e) {
+  this.style.backgroundColor = randomColor();
+  console.log('LINK', e.target, e.currentTarget);    //target means where the event happened, where the click was
+  console.log(this === e.currentTarget);
+
+  // Stopping event propagation
+  // e.stopPropagation();
+});
+
+document.querySelector('.nav__links').addEventListener('click', function(e) {
+  this.style.backgroundColor = randomColor();
+  console.log('CONTAINER', e.target, e.currentTarget);  //currentTarget means the element where the event handler is attached
+});
+
+document.querySelector('.nav').addEventListener('click', function(e) {
+  this.style.backgroundColor = randomColor();
+  console.log('NAV', e.target, e.currentTarget);
+}, true);   //Listen to capture events, but no longer executes bubbling events, rarely used this days.
+
+
+*/
