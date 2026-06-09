@@ -543,3 +543,21 @@ console.log(h1.parentElement.children);     //Trick to get all siblings, includi
   }
 })
 */
+
+
+
+////////////////////// LIFECYCLE DOM EVENTS ////////////////////////
+
+document.addEventListener('DOMContentLoaded', function(e) {
+  console.log('HTML parsed and DOM tree built!',e);
+});
+
+window.addEventListener('load', function(e) {
+  console.log('Page fully loaded, along with css styles and images!', e);
+});
+
+window.addEventListener('beforeunload', function(e) {
+  e.preventDefault();
+  console.log(e);
+  e.returnValue = '';
+})
